@@ -4,7 +4,6 @@ const reviewsRouter = require("../reviews/reviews.router");
 const theatersRouter = require("../theaters/theaters.router");
 const methodNotAllowed = require("../errors/methodNotAllowed");
 
-
 router
   .use("/:movieId/theaters", controller.movieIdExists, theatersRouter);
 

@@ -1,5 +1,10 @@
 const knex = require("../db/connection");
 
+/**
+ * @param {integer} is_showing 
+ * @returns if called from "/movies" route: returns all movies
+ * if route contains "?is_showing=true" query: lists only movies showing
+ */
 function list(is_showing) {
   if (is_showing) {
     return knex("movies_theaters")
@@ -10,13 +15,10 @@ function list(is_showing) {
   return knex("movies").select("*");  
 }
 
-function theaterList(theater_id) {
-  return knex("movies_theaters as mt")
-    .join("movies as m", "m.movie_id", "mt.movie_id")
-    .select("m.*")
-    .where({ "mt.theater_id": theater_id});
-}
-
+/**
+ * @param {integer} movie_id 
+ * @returns movie with matching movie_id
+ */
 function read(movie_id) {
   return knex("movies").select("*").where({ movie_id }).first();
 }
@@ -24,5 +26,4 @@ function read(movie_id) {
 module.exports = {
   list,
   read,
-  theaterList,
 };
