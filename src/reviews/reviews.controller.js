@@ -6,12 +6,12 @@ async function reviewIdExists(req, res, next) {
   const { reviewId } = req.params;
   const review = await reviewsService.read(reviewId);
   if (review) {
-    res.locals.review = review;
+    res.locals.reviewId = review.review_id;
     return next();
   }
   next({
     status: 404,
-    message: `Review cannot be found: ${req.params.reviewId}`,
+    message: `Review cannot be found: ${reviewId}`,
   });
 }
 
@@ -26,7 +26,7 @@ async function list(req, res) {
 async function update(req, res) {
   const updatedReview = {
     ...req.body.data,
-    review_id: res.locals.review.review_id,
+    review_id: res.locals.reviewId,
   };
   await reviewsService.update(updatedReview);
   const result = await reviewsService.read(updatedReview.review_id);
@@ -35,13 +35,13 @@ async function update(req, res) {
 }
 
 async function destroy(req, res) {
-  const { review } = res.locals;
-  await reviewsService.delete(review.review_id);
+  const { reviewId } = res.locals;
+  await reviewsService.delete(reviewId);
   res.sendStatus(204);
 }
 
 module.exports = {
-  list: [asyncErrorBoundary(list)],
-  update: [asyncErrorBoundary(reviewIdExists), asyncErrorBoundary(update)],
-  delete: [asyncErrorBoundary(reviewIdExists), asyncErrorBoundary(destroy)],
+  list: asyncErrorBoundary(list),
+  update: [asyncErrorBoundary(reviewIdExists), update],
+  delete: [asyncErrorBoundary(reviewIdExists), destroy],
 };

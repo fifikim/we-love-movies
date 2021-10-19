@@ -1,9 +1,9 @@
 const router = require("express").Router();
 const controller = require("./movies.controller");
-const methodNotAllowed = require("../errors/methodNotAllowed");
-const cors = require("cors");
 const reviewsRouter = require("../reviews/reviews.router");
 const theatersRouter = require("../theaters/theaters.router");
+const methodNotAllowed = require("../errors/methodNotAllowed");
+
 
 router
   .use("/:movieId/theaters", controller.movieIdExists, theatersRouter);
@@ -13,12 +13,12 @@ router
 
 router
   .route("/:movieId")
-  .get(cors(), controller.read)
+  .get(controller.read)
   .all(methodNotAllowed);
 
 router
   .route("/")
-  .get(cors(), controller.list)
+  .get(controller.list)
   .all(methodNotAllowed);
 
 module.exports = router;
