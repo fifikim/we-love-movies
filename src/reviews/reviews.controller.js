@@ -4,8 +4,7 @@ const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 // VALIDATION MIDDLEWARE
 
 /**
- * checks that route param matches valid review ID
- * else returns 404 status and error message
+ * checks that route param matches valid review ID, else returns 404 status and error message
  */
 async function reviewIdExists(req, res, next) {
   const { reviewId } = req.params;
@@ -23,8 +22,7 @@ async function reviewIdExists(req, res, next) {
 // ROUTE HANDLERS
 
 /**
- * responds with list of reviews for movie with ID matching route param
- * including nested critic information
+ * responds with list of reviews for movie with ID matching route param including nested critic information
  */
 async function list(req, res) {
   const reviews = await service.list(res.locals.movieId);
@@ -35,8 +33,7 @@ async function list(req, res) {
 }
 
 /**
- * updates review with ID matching route param
- * responds with updated review including nested critic information
+ * updates review with ID matching route param & responds with updated review including nested critic information
  */
 async function update(req, res) {
   const updatedReview = {
@@ -50,8 +47,7 @@ async function update(req, res) {
 }
 
 /**
- * deletes review with ID matching route param
- * responds with 204 status
+ * deletes review with ID matching route param & responds with 204 status
  */
 async function destroy(req, res) {
   const { reviewId } = res.locals;

@@ -4,8 +4,7 @@ const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 // VALIDATION MIDDLEWARE
 
 /**
- * checks that route param matches valid movie ID
- * else returns 404 status and error message
+ * checks that route param matches valid movie ID, else returns 404 status and error message
  */
 async function movieIdExists(req, res, next) {
   const { movieId } = req.params;
@@ -23,10 +22,8 @@ async function movieIdExists(req, res, next) {
 // ROUTE HANDLERS
 
 /**
- * if called from "/movies": 
- *    responds with list of all movies 
- * if called from "/movies?is_showing=true":
- *    responds with list of movies currently showing
+ * if called from "/movies": responds with list of all movies 
+ * if called from "/movies?is_showing=true": responds with list of movies currently showing
  */
 async function list(req, res) {
   const is_showing = req.query.is_showing;

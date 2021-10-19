@@ -3,10 +3,8 @@ const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 // const mapProperties = require("../utils/map-properties");
 
 /**
- * if called from "/:movieId/theaters": 
- *    responds with list of theaters showing movie with ID matching route param
- * if called from "/theaters": 
- *    responds with list of all theaters including nested list of movies shown
+ * if called from "/:movieId/theaters": responds with list of theaters showing movie with ID matching route param
+ * if called from "/theaters": responds with list of all theaters including nested list of movies shown
  */
 async function list(req, res) {
   if (res.locals.movieId) { 
