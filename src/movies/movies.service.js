@@ -1,7 +1,7 @@
 const knex = require("../db/connection");
 
 /**
- * @param {integer} is_showing 
+ * @param {boolean} is_showing 
  * @returns returns list of all movies or movies currently showing
  */
 function list(is_showing) {
