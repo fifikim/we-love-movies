@@ -2,8 +2,7 @@ const knex = require("../db/connection");
 
 /**
  * @param {integer} is_showing 
- * @returns if called from "/movies" route: returns all movies
- * if route contains "?is_showing=true" query: lists only movies showing
+ * @returns returns list of all movies or movies currently showing
  */
 function list(is_showing) {
   if (is_showing) {
