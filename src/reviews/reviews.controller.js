@@ -1,5 +1,6 @@
 const service = require("./reviews.service");
 const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
+const mapProperties = require("../utils/map-properties");
 
 // VALIDATION MIDDLEWARE
 
