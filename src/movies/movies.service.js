@@ -1,30 +1,26 @@
 const knex = require("../db/connection");
 const mapProperties = require("../utils/map-properties");
 
+// maps critic properties to result's nested critic object
 const addCritic = mapProperties({
   critic_id: "critic.critic_id",
   preferred_name: "critic.preferred_name",
   surname: "critic.surname",
   organization_name: "critic.organization.name",
-})
-
-
-/**
- * @returns returns list of all movies
- */
-function list() {
-  return knex("movies").select("*");
-}
+});
 
 /**
- * @returns returns list of movies currently showing
+ * @returns returns list of all movies or movies currently showing
  */
-function listShowing() {
+function list(isShowing) {
+  if (isShowing) {
     return knex("movies as m")
       .join("movies_theaters as mt", "m.movie_id", "mt.movie_id")
       .distinct("m.*")
       .where({ "mt.is_showing": true })
       .orderBy("m.movie_id");
+  }
+  return knex("movies").select("*");
 }
 
 /**
@@ -53,7 +49,6 @@ function readReviews(movieId) {
 
 module.exports = {
   list,
-  listShowing,
   read,
   readTheaters,
   readReviews,

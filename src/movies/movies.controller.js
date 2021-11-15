@@ -3,34 +3,16 @@ const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 
 // VALIDATION MIDDLEWARE
 
-function isShowing(req, res, next) {
-  if (req.query.is_showing && req.query.is_showing !== true) {
-    return next({
-      status: 400,
-      message: `Invalid request query.`,
-    })
-  };
-  return next();
-}
-
 /**
  * checks that route param matches valid movie ID, else returns 404 status and error message
  */
 async function movieIdExists(req, res, next) {
   const { movieId } = req.params;
-  let foundMovie;
-  
-  // use appropriate service fn by query in url
-  if (req.originalUrl.includes("theaters")) {
-    foundMovie = await service.readTheaters(movieId);
-  } else if (req.originalUrl.includes("reviews")) {
-    foundMovie = await service.readReviews(movieId);
-  } else {
-    foundMovie = await service.read(movieId);
-  }
+  const foundMovie = await service.read(movieId);
 
   if (foundMovie) {
     res.locals.movie = foundMovie;
+    res.locals.movieId = movieId;
     return next();
   }
   return next({
@@ -46,13 +28,9 @@ async function movieIdExists(req, res, next) {
  * if called from "/movies?is_showing=true": responds with list of movies currently showing
  */
 async function list(req, res) {
-  let data;
-  if (req.query.is_showing && req.query.is_showing === "true") {
-    data = await service.listShowing();
-  } else {
-    data = await service.list();
-  }
-  res.json({ data });
+  const isShowing = req.query.is_showing;
+  const movies = await service.list(isShowing);
+  res.json({ data: movies });
 }
 
 /**
@@ -62,7 +40,26 @@ async function read(req, res) {
   res.json({ data: res.locals.movie });
 }
 
+/**
+ * responds with theaters that are showing specified movie
+ */
+ async function readTheaters(req, res, next) {
+  const theaters = await service.readTheaters(res.locals.movieId);
+  res.json({ data: theaters });
+}
+
+/**
+* responds with reviews from specified movie
+*/
+async function readReviews(req, res, next) {
+  const reviews = await service.readReviews(res.locals.movieId);
+  res.json({ data: reviews });
+}
+
+
 module.exports = {
-  list: [isShowing, asyncErrorBoundary(list)],
+  list,
   read: [asyncErrorBoundary(movieIdExists), read],
+  readTheaters: [ asyncErrorBoundary(isIdValid), readTheaters ],
+  readReviews: [ asyncErrorBoundary(isIdValid), readReviews ],
 };
