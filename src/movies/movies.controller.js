@@ -60,6 +60,6 @@ async function readReviews(req, res, next) {
 module.exports = {
   list,
   read: [asyncErrorBoundary(movieIdExists), read],
-  readTheaters: [ asyncErrorBoundary(isIdValid), readTheaters ],
-  readReviews: [ asyncErrorBoundary(isIdValid), readReviews ],
+  readTheaters: [ asyncErrorBoundary(movieIdExists), readTheaters ],
+  readReviews: [ asyncErrorBoundary(movieIdExists), readReviews ],
 };
