@@ -1,37 +1,31 @@
 const knex = require("../db/connection");
+const reduceProperties = require("../utils/reduce-properties");
 
 /**
- * @returns all theaters 
+ * 
  */
+ const addMovies = reduceProperties("theater_id", {
+  movie_id: ["movies", null, "movie_id"],
+  title: ["movies", null, "title"],
+  rating: ["movies", null, "rating"],
+  description: ["movies", null, "description"],
+  runtime_in_minutes: ["movies", null, "runtime_in_minutes"],
+  image_url: ["movies", null, "image_url"],
+  is_showing: ["movies", null, "is_showing"],
+  theater_id: ["movies", null, "theater_id"]
+});
+
+/**
+* 
+*/
 function list() {
-  return knex("theaters").select("*");
-}
-
-/**
- * @param {integer} movie_id 
- * @returns theaters showing movies with matching movie_id param
- */
-function theatersByMovie(movie_id) {
-  return knex("movies_theaters as mt")
-    .join("theaters as t", "mt.theater_id", "t.theater_id")
-    .select("t.*")
-    .where({ "mt.movie_id": movie_id });
-}
-
-/**
- * @param {integer} theater_id 
- * @returns movies being shown in theater with matching theater_id 
- */
-function moviesByTheater(theater_id) {
-  return knex("movies_theaters as mt")
-  .join("theaters as t", "mt.theater_id", "t.theater_id")
+return knex("theaters as t")
+  .join("movies_theaters as mt", "mt.theater_id", "t.theater_id")
   .join("movies as m", "m.movie_id", "mt.movie_id")
-  .select("m.*")
-  .where({ "mt.theater_id": theater_id });
+  .select("*")  
+  .then((theaters) => addMovies(theaters));
 }
 
 module.exports = {
   list,
-  theatersByMovie,
-  moviesByTheater,
 };
