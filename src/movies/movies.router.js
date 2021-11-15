@@ -11,6 +11,16 @@ router
   .use("/:movieId/reviews", controller.movieIdExists, reviewsRouter);
 
 router
+  .route("/:movieId/theaters")
+  .get(controller.read)
+  .all(methodNotAllowed);
+
+router
+  .route("/:movieId/reviews")
+  .get(controller.read)
+  .all(methodNotAllowed);
+
+router
   .route("/:movieId")
   .get(controller.read)
   .all(methodNotAllowed);

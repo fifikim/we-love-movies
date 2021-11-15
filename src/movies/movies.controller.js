@@ -3,17 +3,37 @@ const asyncErrorBoundary = require("../errors/asyncErrorBoundary");
 
 // VALIDATION MIDDLEWARE
 
+function isShowing(req, res, next) {
+  if (req.query.is_showing && req.query.is_showing !== true) {
+    return next({
+      status: 400,
+      message: `Invalid request query.`,
+    })
+  };
+  return next();
+}
+
 /**
  * checks that route param matches valid movie ID, else returns 404 status and error message
  */
 async function movieIdExists(req, res, next) {
   const { movieId } = req.params;
-  const movie = await service.read(movieId);
-  if (movie) {
-    res.locals.movieId = movieId;
+  let foundMovie;
+  
+  // use appropriate service fn by query in url
+  if (req.originalUrl.includes("theaters")) {
+    foundMovie = await service.readTheaters(movieId);
+  } else if (req.originalUrl.includes("reviews")) {
+    foundMovie = await service.readReviews(movieId);
+  } else {
+    foundMovie = await service.read(movieId);
+  }
+
+  if (foundMovie) {
+    res.locals.movie = foundMovie;
     return next();
   }
-  next({
+  return next({
     status: 404,
     message: `Movie cannot be found: ${movieId}`,
   });
@@ -26,22 +46,23 @@ async function movieIdExists(req, res, next) {
  * if called from "/movies?is_showing=true": responds with list of movies currently showing
  */
 async function list(req, res) {
-  const is_showing = req.query.is_showing;
-  const movies = await service.list(is_showing);
-  res.json({ data: movies });
+  let data;
+  if (req.query.is_showing && req.query.is_showing === "true") {
+    data = await service.listShowing();
+  } else {
+    data = await service.list();
+  }
+  res.json({ data });
 }
 
 /**
  * responds with information for movie with ID matching route param
  */
 async function read(req, res) {
-  const { movieId } = req.params;
-  const movie = await service.read(movieId);
-  res.json({ data: movie });
+  res.json({ data: res.locals.movie });
 }
 
 module.exports = {
-  list: asyncErrorBoundary(list),
+  list: [isShowing, asyncErrorBoundary(list)],
   read: [asyncErrorBoundary(movieIdExists), read],
-  movieIdExists,
 };
