@@ -44,7 +44,7 @@ function readReviews(movieId) {
     .select("*")
     .where({ "r.movie_id": movieId })
     // iterate thru selected reviews & add critic to each
-    .then((reviews) => reviews.map(review => addCritic(review)));
+    .then((reviews) => Object.values(reviews).map(addCritic));
 }
 
 module.exports = {
